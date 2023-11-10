@@ -9,11 +9,11 @@ import Link from "next/link";
 
 const showThemeSwitch = false;
 
-const Hamburger: React.FC<any> = ({}) => {
+const Hamburger: React.FC<any> = ({ onClick }) => {
   return (
     <button
       id="hamburger-menu"
-      onClick={() => {}}
+      onClick={onClick}
       className="lg:hidden block hamburger-menu navbar-toggler"
     >
       {/* <svg
@@ -38,7 +38,7 @@ const Hamburger: React.FC<any> = ({}) => {
   );
 };
 
-const Header: React.FC<any> = ({}) => {
+const Header: React.FC<any> = ({ themeType, onSwitchTheme }) => {
   const onHamburgerClick = () => {
     const menu = document.getElementById("menu");
     const hamburger = document.getElementById("hamburger-menu");
@@ -63,13 +63,13 @@ const Header: React.FC<any> = ({}) => {
               text-base text-gray-700
               md:flex
               md:justify-between 
-              items-center
               md:pt-0"
           >
             <li>
               <Link
                 className="nav-link md:mr-4 py-2 px-4 bg-neutral-200 rounded-lg"
-                href="https://crm.edugyanam.com/admin"
+                href="https://crm.edugyanam.com/admin/content/employee_leads_manage"
+                target="_blank"
               >
                 CRM
               </Link>
@@ -78,6 +78,7 @@ const Header: React.FC<any> = ({}) => {
               <Link
                 className="nav-link rounded-lg bg-green-600 py-2 px-4 text-white"
                 href="https://eduworldglobal.com/"
+                target="_blank"
               >
                 Our Site
               </Link>
