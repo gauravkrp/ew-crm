@@ -1,9 +1,7 @@
-import Head from "next/head";
-import { NextPage } from "next";
-
 import Header from "./Header";
 
-const withLayout = (PageComponent: NextPage) => (props: any) => {
+// eslint-disable-next-line react/display-name
+const withLayout = (PageComponent: any) => (props: any) => {
   return (
     <>
       <div className="w-full h-full bg-gray-50">
