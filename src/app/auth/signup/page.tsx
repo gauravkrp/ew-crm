@@ -81,7 +81,7 @@ export default function Signup() {
                 Log In
               </Button>
               <div className="flex justify-center items-center flex-wrap gap-2">
-                <Typography>New on our platform?</Typography>
+                <Typography>Already have an account?</Typography>
                 <Typography component={Link} href="/auth/login" color="primary">
                   Login
                 </Typography>
