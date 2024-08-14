@@ -1,94 +1,102 @@
 "use client";
-import Link from "next/link";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import TextField from "@mui/material/TextField";
-import IconButton from "@mui/material/IconButton";
-import InputAdornment from "@mui/material/InputAdornment";
-import Button from "@mui/material/Button";
-
 import { useState } from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import Link from "next/link";
 import axios from "axios";
 
 export default function Signup() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [error, setError] = useState<string | null>(null);
-  const [message, setMessage] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
 
   const handleSignup = async () => {
-    if (!email || !password) return;
+    if (!email || !password || !confirmPassword) {
+      alert("Please fill all the fields");
+      return;
+    }
+    if (password != confirmPassword) {
+      alert("Password and confirm password are not same");
+      return;
+    }
     try {
       const { data } = await axios.post("/api/auth/signup", {
         email,
         password,
       });
       localStorage.setItem("TOKEN", data?.session_jwt);
-      setMessage("Successfully logged in!");
+      alert(`Successfully logged in!`);
     } catch (err: any) {
-      setError(err?.message);
+      alert(err?.message);
     }
   };
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-[100dvh] relative p-6">
-      <Card className="flex flex-col sm:is-[450px]">
-        <CardContent className="p-6 sm:!p-12">
-          <Link href="/" className="flex justify-center items-center mbe-6">
-            {/* <Logo /> */}
-          </Link>
-          <div className="flex flex-col gap-5">
-            <div>
-              <Typography variant="h4">{`Welcome to Edugyanam CRM!👋🏻`}</Typography>
-              <Typography className="mbs-1">
-                Please sign-up to your account and start the adventure
-              </Typography>
-            </div>
-            <div>
-              <TextField
-                autoFocus
-                fullWidth
-                onChange={(e: any) => setEmail(e?.target.value)}
-                label="Email"
-                style={{ marginBottom: 20 }}
-              />
-              <TextField
-                fullWidth
-                label="Password"
-                id="outlined-adornment-password"
-                style={{ marginBottom: 10 }}
-                onChange={(e: any) => setPassword(e?.target.value)}
-              />
-              <div className="flex justify-between items-center gap-x-3 gap-y-1 mb-4 flex-wrap">
-                <Typography
-                  className="text-end"
-                  color="primary"
-                  component={Link}
-                  href="/forgot-password"
-                >
-                  Forgot password?
-                </Typography>
-              </div>
-              <Button
-                fullWidth
-                variant="contained"
-                style={{ background: "#000", marginBottom: 20 }}
-                onClick={() => {
-                  handleSignup();
+    <div className="w-full h-[100dvh] flex items-center justify-center">
+      <Card className="w-[650px]">
+        <CardHeader>
+          <CardTitle>SignUp</CardTitle>
+          <CardDescription>{`Welcome to Edugyanam CRM!👋🏻`}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="grid w-full items-center gap-4">
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="email">Email</Label>
+              <Input
+                onChange={(e) => {
+                  setEmail(e?.target?.value);
                 }}
+                type="email"
+                id="email"
+                placeholder="Enter email ...."
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="password">Password</Label>
+              <Input
+                type="password"
+                id="password"
+                placeholder="Enter password"
+                onChange={(e) => {
+                  setPassword(e?.target?.value);
+                }}
+              />
+            </div>
+            <div className="flex flex-col space-y-2">
+              <Label htmlFor="password">Confirm Password</Label>
+              <Input
+                type="password"
+                id="password"
+                placeholder="Enter Confirm password"
+                onChange={(e) => {
+                  setConfirmPassword(e?.target?.value);
+                }}
+              />
+            </div>
+            <div className="text-sm">
+              Already have an account?{" "}
+              <Link
+                className="text-blue-800 font-semibold"
+                href={"/auth/login"}
               >
-                Log In
-              </Button>
-              <div className="flex justify-center items-center flex-wrap gap-2">
-                <Typography>Already have an account?</Typography>
-                <Typography component={Link} href="/auth/login" color="primary">
-                  Login
-                </Typography>
-              </div>
+                Login
+              </Link>
             </div>
           </div>
         </CardContent>
+        <CardFooter className="flex justify-end">
+          <Button onClick={handleSignup}>Signup</Button>
+        </CardFooter>
       </Card>
     </div>
   );
