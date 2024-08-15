@@ -34,7 +34,7 @@ export default function Signup() {
         email,
         password,
       });
-      localStorage.setItem("TOKEN", data?.session_jwt);
+      localStorage.setItem("TOKEN", data?.sessionToken);
       alert(`Successfully logged in!`);
     } catch (err: any) {
       alert(err?.message);

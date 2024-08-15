@@ -1,36 +1,41 @@
+import { stytchAPI } from "@/lib/stytch";
+import { supabase } from "@/utils/supabase/client";
 import axios from "axios";
 import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   const requestData: any = await req.json();
-  console.log(requestData);
+  const { email, password, first_name, last_name, phone } = requestData;
+
   const data: any = {
-    email: requestData?.email,
-    password: requestData?.password,
+    email: email,
+    password: password,
+    session_duration_minutes: 60 * 24, //
   };
   try {
-    const username = process.env.STYTCH_PROJECT_ID as string;
-    const password = process.env.STYTCH_SECRET as string;
+    const authResponse: any = await stytchAPI.post(
+      "https://api.stytch.com/v1/passwords",
+      data
+    );
 
-    const config = {
-      method: "post",
-      url: "https://api.stytch.com/v1/passwords",
-      auth: {
-        username: username,
-        password: password,
-      },
-      headers: {
-        "Content-Type": "application/json",
-      },
-      data: data,
-    };
+    const { data: dbData, error } = await supabase
+      .from("users")
+      .insert([{ email, first_name, last_name, status: "pending", phone }]);
+    if (error) {
+      return NextResponse.json(
+        { error: "Failed to add data" },
+        { status: 400 }
+      );
+    }
 
-    const response: any = await axios(config);
-    console.log(response?.data);
+    const response: any = await stytchAPI.post(
+      "https://api.stytch.com/v1/passwords/authenticate",
+      data
+    );
+    console.log();
 
-    return NextResponse.json({ sessionToken: "hello" });
+    return NextResponse.json({ sessionToken: response?.data?.session_jwt });
   } catch (error: any) {
-    console.error(error?.response?.data?.error_message);
     return NextResponse.json({
       error: error?.response?.data?.error_message || error?.message,
     });

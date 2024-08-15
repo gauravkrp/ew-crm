@@ -29,7 +29,7 @@ export default function Login() {
         email,
         password,
       });
-      localStorage.setItem("TOKEN", data?.session_jwt);
+      localStorage.setItem("TOKEN", data?.sessionToken);
       alert(`Successfully logged in!`);
     } catch (err: any) {
       alert(err?.message);
@@ -40,7 +40,7 @@ export default function Login() {
     <div className="w-full h-[100dvh] flex items-center justify-center">
       <Card className="w-[650px]">
         <CardHeader>
-          <CardTitle>SignUp</CardTitle>
+          <CardTitle>Login</CardTitle>
           <CardDescription>{`Welcome to Edugyanam CRM!👋🏻`}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -71,15 +71,15 @@ export default function Login() {
               Already have an account?{" "}
               <Link
                 className="text-blue-800 font-semibold"
-                href={"/auth/login"}
+                href={"/auth/signup"}
               >
-                Login
+                Signup
               </Link>
             </div>
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={handleLogin}>Signup</Button>
+          <Button onClick={handleLogin}>Login</Button>
         </CardFooter>
       </Card>
     </div>
