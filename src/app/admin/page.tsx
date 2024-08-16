@@ -53,8 +53,8 @@ export default function Login() {
 
   return (
     <div className="w-full h-[100dvh]">
-      <NewHeader />
-      <div className="px-20 flex gap-x-4 flex-wrap gap-y-4">
+      <NewHeader isAuthorized={false} />
+      <div className="px-20 flex gap-x-4 flex-wrap gap-y-4 mt-8">
         {users.map((user: any, i: number) => {
           return (
             <Card key={i} className="w-[320px]">

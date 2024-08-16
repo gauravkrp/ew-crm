@@ -1,17 +1,22 @@
-/**
- * v0 by Vercel.
- * @see https://v0.dev/t/FBccZ0IWtW0
- * Documentation: https://v0.dev/docs#integrating-generated-code-into-your-nextjs-app
- */
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
 
-export default function Component() {
+export default function Header({
+  isAuthorized = false,
+}: {
+  isAuthorized: boolean;
+}) {
   return (
-    <div className="container mx-auto px-4 md:px-6 lg:px-8">
-      <header className="flex h-20 w-full shrink-0 items-center px-4 md:px-6">
+    <div className=" mx-auto px-4 md:px-6 lg:px-12">
+      <header className="flex h-20 w-full shrink-0 items-center px-2 md:px-6">
         <Link href="#" className="mr-6 hidden lg:flex" prefetch={false}>
-          <CarIcon className="h-6 w-6" />
+          <Image
+            src={"/assets/logo.png"}
+            width={72}
+            height={24}
+            alt="Education World"
+          />
           <span className="sr-only">Car E-commerce</span>
         </Link>
         <div className="ml-auto flex gap-2">
@@ -36,19 +41,39 @@ export default function Component() {
           >
             Contact
           </Link>
-          <Link href={"/auth/login"}>
-            <Button
-              variant="ghost"
-              className="justify-self-end px-8 py-1 text-sm"
-            >
-              Log in
-            </Button>
-          </Link>
-          <Link href={"/auth/signup"}>
-            <Button className="justify-self-end px-8 py-1 text-sm">
-              Sign Up
-            </Button>
-          </Link>
+          {isAuthorized ? (
+            <div className="flex gap-x-4 items-center">
+              <Link href={"/auth/signup"}>
+                <Button
+                  variant={"outline"}
+                  className="justify-self-end px-6 h-8 text-sm"
+                >
+                  Upload
+                </Button>
+              </Link>
+              <Link href={"/auth/signup"}>
+                <Button className="justify-self-end px-6 h-8 py-0 text-sm">
+                  ADD
+                </Button>
+              </Link>
+            </div>
+          ) : (
+            <div>
+              <Link href={"/auth/login"}>
+                <Button
+                  variant="ghost"
+                  className="justify-self-end px-8 py-1 text-sm"
+                >
+                  Log in
+                </Button>
+              </Link>
+              <Link href={"/auth/signup"}>
+                <Button className="justify-self-end px-8 py-1 text-sm">
+                  Sign Up
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
       </header>
     </div>

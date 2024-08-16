@@ -5,12 +5,8 @@ import { stytchAPI } from "@/lib/stytch";
 import { supabase } from "./utils/supabase/client";
 
 export async function middleware(request: NextRequest) {
-  console.log("req");
-  // const req = await request.json();
   const token = request?.headers?.get("authorization")?.split(" ")[1];
-
-  // const token = req?.headers?.authorization?.split(" ")[1];
-  // console.log(token);
+  console.log("token: ", token);
 
   if (!token) {
     return NextResponse.json({ error: "No token provided" }, { status: 401 });
@@ -28,10 +24,8 @@ export async function middleware(request: NextRequest) {
       .from("users")
       .select("role")
       .eq("email", email);
-    console.log(dbData?.[0]?.role);
     const role = dbData?.[0]?.role;
     const response = NextResponse.next();
-    console.log(dbData);
 
     response.cookies.set("role", role);
     return response;
@@ -43,5 +37,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/v1/approval"],
+  matcher: ["/api/v1/approval", "/api/v1/student"],
 };
