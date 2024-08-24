@@ -25,3 +25,41 @@ body {
     )
     rgb(var(--background-start-rgb)); */
 }
+
+.auth_container {
+  margin-top: 8%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  row-gap: 5px;
+  align-items:center;
+}
+
+.auth_title {
+  /* width: 322px; */
+  /* height: 38px; */
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 24px;
+  display: flex;
+  align-items: center;
+  color: #28d599;
+}
+
+.login_btn {
+  background: #28d599;
+  border: 1px solid #28d599;
+  box-sizing: border-box;
+  border-radius: 5px;
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-weight: 400;
+  font-size: 1.0rem;
+  line-height: 1rem;
+  margin-top: 8%;
+  padding: 8px 30px;
+  color: #ffffff;
+  /* width: 10rem; */
+}
