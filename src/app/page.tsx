@@ -1,5 +1,5 @@
 "use client";
-import { getLeads } from "@/api/leads";
+// import { getLeads } from "@/api/leads";
 import withLayout from "@/components/Layout";
 import axios from "axios";
 import Image from "next/image";
@@ -46,31 +46,31 @@ function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
-  const fetchData = async (page = 1, limit = 10) => {
-    try {
-      const {
-        data: { data, meta },
-      } = await getLeads({ page, limit });
-      setLeadsData(data);
-      setTotalRows(meta?.filter_count || 0);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  // const fetchData = async (page = 1, limit = 10) => {
+  //   try {
+  //     const {
+  //       data: { data, meta },
+  //     } = await getLeads({ page, limit });
+  //     setLeadsData(data);
+  //     setTotalRows(meta?.filter_count || 0);
+  //     console.log(data);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // };
 
   const handlePageChange = (page: number) => {
-    fetchData(page);
+    // fetchData(page);
     setCurrentPage(page);
   };
 
   const handlePerRowsChange = async (newPerPage: number, page: number) => {
-    fetchData(page, newPerPage);
+    // fetchData(page, newPerPage);
     setPerPage(newPerPage);
   };
 
   useEffect(() => {
-    fetchData();
+    // fetchData();
   }, []);
   return (
     <>

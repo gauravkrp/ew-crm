@@ -45,7 +45,7 @@ export type Student = {
   last_name: string;
   father_name: string;
   gender: string;
-  phone_number: string;
+  phone: string;
 };
 
 export const columns: ColumnDef<Student>[] = [
@@ -92,9 +92,9 @@ export const columns: ColumnDef<Student>[] = [
     cell: ({ row }) => <div>{row.getValue("gender")}</div>,
   },
   {
-    accessorKey: "phone_number",
+    accessorKey: "phone",
     header: "Phone Number",
-    cell: ({ row }) => <div>{row.getValue("phone_number")}</div>,
+    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
   },
   {
     id: "actions",
@@ -110,7 +110,7 @@ export const columns: ColumnDef<Student>[] = [
             last_name: student.last_name,
             father_name: student.father_name,
             gender: student.gender,
-            phone_number: student.phone_number,
+            phone: student.phone,
           };
 
           await axios.patch(`/api/v1/student/${student.id}`, updatedData);
