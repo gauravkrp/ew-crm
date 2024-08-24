@@ -3,16 +3,15 @@ import axios from "axios";
 const apiBaseURL = "https://crm.edugyanam.com";
 
 const COMMON_HEADERS = {
-  // 'Access-Control-Allow-Origin': '*',
-  Accept: "application/json",
-  "Content-Type": "application/json",
+	Accept: "application/json",
+	"Content-Type": "application/json",
 };
 
 export const apiInstance = axios.create({
-  baseURL: apiBaseURL,
-  timeout: 15000,
-  headers: COMMON_HEADERS,
-  validateStatus: function (status) {
-    return status < 300;
-  },
+	baseURL: apiBaseURL,
+	timeout: 15000,
+	headers: COMMON_HEADERS,
+	validateStatus: function (status) {
+		return status < 300;
+	},
 });
