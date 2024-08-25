@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
         {
           error: "only admin have access to get this data",
         },
-        { status: 401 }
+        { status: 403 } // 403 -> Authorization error
       );
     }
     const { data, error } = await supabase
@@ -45,7 +45,7 @@ export async function PATCH(req: NextRequest) {
         {
           error: "only admin have access to get this data",
         },
-        { status: 401 }
+        { status: 403 }
       );
     }
     const { status, userId } = await req.json();

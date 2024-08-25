@@ -4,15 +4,15 @@ import type { NextRequest } from "next/server";
 import { stytchAPI } from "@/lib/stytch";
 import { supabase } from "./utils/supabase/client";
 
+// Check status
 export async function middleware(request: NextRequest) {
   const token = request?.headers?.get("authorization")?.split(" ")[1];
-  console.log("token: ", token);
+  // console.log("token: ", token);
 
   if (!token) {
     return NextResponse.json({ error: "No token provided" }, { status: 401 });
   }
   try {
-    console.log("hello");
     const data = { session_jwt: token };
     const authResponse: any = await stytchAPI.post(
       "https://api.stytch.com/v1/sessions/authenticate",
@@ -26,6 +26,7 @@ export async function middleware(request: NextRequest) {
       .eq("email", email);
     const role = dbData?.[0]?.role;
     const response = NextResponse.next();
+    // console.log(response);
 
     response.cookies.set("role", role);
     return response;

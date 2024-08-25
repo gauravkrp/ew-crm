@@ -32,7 +32,6 @@ export async function POST(req: Request) {
       "https://api.stytch.com/v1/passwords/authenticate",
       data
     );
-    console.log();
 
     return NextResponse.json({ sessionToken: response?.data?.session_jwt });
   } catch (error: any) {

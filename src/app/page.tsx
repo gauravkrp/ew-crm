@@ -5,8 +5,7 @@ import axios from "axios";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import DataTable from "react-data-table-component";
-import { useRouter } from "next/navigation";
-import { apiInstance, setAuthToken } from "@/api";
+// import { apiInstance, setAuthToken } from "@/api";
 
 const columns = [
   {
@@ -71,15 +70,15 @@ function Home() {
     setPerPage(newPerPage);
   };
 
-  const getToken = async () => {
-    const token = localStorage.getItem("Token");
-    if (token) {
-      setAuthToken(token);
-      fetchData();
-    } else {
-      router.push("/auth");
-    }
-  };
+  // const getToken = async () => {
+  //   const token = localStorage.getItem("Token");
+  //   if (token) {
+  //     setAuthToken(token);
+  //     fetchData();
+  //   } else {
+  //     router.push("/auth");
+  //   }
+  // };
 
   useEffect(() => {
     // fetchData();

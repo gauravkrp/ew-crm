@@ -14,7 +14,7 @@ export async function GET(req: NextRequest) {
         {
           error: "only admin have access to get this data",
         },
-        { status: 401 }
+        { status: 403 }
       );
     }
     const { data, error } = await supabase
@@ -38,6 +38,8 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const requestData: any = await req.json();
+    console.log(requestData);
+
     const { email, gender, first_name, last_name, phone, father_name, dob } =
       requestData;
     console.log(requestData);
@@ -49,6 +51,9 @@ export async function POST(req: NextRequest) {
       first_name,
       last_name,
       email,
+      father_name,
+      gender,
+      phone,
     });
     if (error) {
       console.log(error);

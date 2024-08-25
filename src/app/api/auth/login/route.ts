@@ -1,6 +1,7 @@
 import axios from "axios";
 import { NextResponse } from "next/server";
 import { stytchAPI } from "@/lib/stytch";
+
 export async function POST(req: Request) {
   const requestData: any = await req.json();
 
@@ -10,6 +11,7 @@ export async function POST(req: Request) {
       password: requestData?.password,
       session_duration_minutes: 60 * 24, //
     };
+    console.log(data);
 
     const response: any = await stytchAPI.post(
       "https://api.stytch.com/v1/passwords/authenticate",
@@ -18,6 +20,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ sessionToken: response?.data?.session_jwt });
   } catch (error: any) {
+    console.log(error?.response?.data?.error_message);
+
     return NextResponse.json(
       {
         error: error?.response?.data?.error_message || error?.message,
