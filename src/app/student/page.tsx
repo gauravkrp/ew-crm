@@ -24,6 +24,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import axios from "axios";
+import toast from "react-hot-toast";
 
 // Schema validation using Zod
 const formSchema = z.object({
@@ -71,10 +72,10 @@ export default function StudentForm() {
       const { data: responseData } = await axios.post("/api/v1/student", data);
       console.log(responseData);
 
-      alert("Form submitted successfully!");
+      toast("Form submitted successfully!");
     } catch (error) {
       console.error("Error:", error);
-      alert("There was an error submitting the form.");
+      toast("There was an error submitting the form.");
     }
   };
 

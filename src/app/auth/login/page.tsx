@@ -14,14 +14,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import axios from "axios";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-
+  const router = useRouter();
   const handleLogin = async () => {
     if (!email || !password) {
-      alert("Please fill all the fields");
+      toast("Please fill all the fields");
       return;
     }
     try {
@@ -30,9 +32,10 @@ export default function Login() {
         password,
       });
       localStorage.setItem("TOKEN", data?.sessionToken);
-      alert(`Successfully logged in!`);
+      toast(`Successfully logged in!`);
+      router.push("/dashboard");
     } catch (err: any) {
-      alert(err?.message);
+      toast(err?.message);
     }
   };
 

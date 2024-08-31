@@ -11,7 +11,6 @@ export async function POST(req: Request) {
       password: requestData?.password,
       session_duration_minutes: 60 * 24, //
     };
-    console.log(data);
 
     const response: any = await stytchAPI.post(
       "https://api.stytch.com/v1/passwords/authenticate",
@@ -20,13 +19,12 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ sessionToken: response?.data?.session_jwt });
   } catch (error: any) {
-    console.log(error?.response?.data?.error_message);
-
+    const statusCode = error?.response?.status || 500;
     return NextResponse.json(
       {
         error: error?.response?.data?.error_message || error?.message,
       },
-      { status: 400 }
+      { status: statusCode }
     );
   }
 }

@@ -17,29 +17,22 @@ export default function Header({
             height={24}
             alt="Education World"
           />
-          <span className="sr-only">Car E-commerce</span>
         </Link>
         <div className="ml-auto flex gap-2">
           <Link
-            href="#"
+            href="/dashboard"
             className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50"
             prefetch={false}
           >
-            Home
+            Dashboard
           </Link>
+
           <Link
-            href="#"
+            href="https://www.eduworldglobal.com"
             className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50"
             prefetch={false}
           >
-            About
-          </Link>
-          <Link
-            href="#"
-            className="group inline-flex h-9 w-max items-center justify-center rounded-md bg-white px-4 py-2 text-sm font-medium transition-colors hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-none disabled:pointer-events-none disabled:opacity-50 data-[active]:bg-gray-100/50 data-[state=open]:bg-gray-100/50 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus:bg-gray-800 dark:focus:text-gray-50 dark:data-[active]:bg-gray-800/50 dark:data-[state=open]:bg-gray-800/50"
-            prefetch={false}
-          >
-            Contact
+            eduworld
           </Link>
           {isAuthorized ? (
             <div className="flex gap-x-4 items-center">
@@ -51,7 +44,7 @@ export default function Header({
                   Upload
                 </Button>
               </Link>
-              <Link href={"/auth/signup"}>
+              <Link href={"/student"}>
                 <Button className="justify-self-end px-6 h-8 py-0 text-sm">
                   ADD
                 </Button>

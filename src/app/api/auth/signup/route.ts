@@ -35,8 +35,13 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ sessionToken: response?.data?.session_jwt });
   } catch (error: any) {
-    return NextResponse.json({
-      error: error?.response?.data?.error_message || error?.message,
-    });
+    const statusCode = error?.response?.status || 500;
+
+    return NextResponse.json(
+      {
+        error: error?.response?.data?.error_message || error?.message,
+      },
+      { status: statusCode }
+    );
   }
 }

@@ -14,7 +14,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import axios from "axios";
-import toast from "react-hot-toast";
 
 export default function Signup() {
   const [email, setEmail] = useState<string>("");
@@ -23,11 +22,11 @@ export default function Signup() {
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
-      toast("Please fill all the fields");
+      alert("Please fill all the fields");
       return;
     }
     if (password != confirmPassword) {
-      toast("Password and confirm password are not same");
+      alert("Password and confirm password are not same");
       return;
     }
     try {
@@ -35,10 +34,10 @@ export default function Signup() {
         email,
         password,
       });
-      localStorage.setItem("TOKEN", data?.sessionToken);
-      toast(`Successfully logged in!`);
+      localStorage.setItem("TOKEN", data?.session_jwt);
+      alert(`Successfully logged in!`);
     } catch (err: any) {
-      toast(err?.message);
+      alert(err?.message);
     }
   };
 

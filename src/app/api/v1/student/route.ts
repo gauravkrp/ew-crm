@@ -19,7 +19,8 @@ export async function GET(req: NextRequest) {
     }
     const { data, error } = await supabase
       .from("students")
-      .select("first_name, last_name, email, phone, id, father_name, gender");
+      .select("first_name, last_name, email, phone, id, father_name, gender")
+      .order("id", { ascending: false });
     if (error) {
       return NextResponse.json(
         { error: "Failed to add data" },
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
       {
         error: error?.response?.data?.error_message || error?.message,
       },
-      { status: 400 }
+      { status: 500 }
     );
   }
 }
@@ -105,3 +106,59 @@ export async function POST(req: NextRequest) {
 //     });
 //   }
 // }
+
+export async function PATCH(req: NextRequest) {
+  try {
+    const requestData: any = await req.json();
+    console.log(requestData);
+
+    const {
+      id,
+      email,
+      gender,
+      first_name,
+      last_name,
+      phone,
+      father_name,
+      dob,
+    } = requestData;
+
+    if (!id) {
+      return NextResponse.json({ error: "ID is required" }, { status: 400 });
+    }
+
+    const role = req.cookies.get("role")?.value;
+    console.log("role: ", role);
+
+    // Perform the update
+    const { data, error } = await supabase
+      .from("students")
+      .update({
+        first_name,
+        last_name,
+        email,
+        father_name,
+        gender,
+        phone,
+        dob, // Assuming dob is a column in the table
+      })
+      .eq("id", id); // Update the record where the id matches
+
+    if (error) {
+      console.log(error);
+      return NextResponse.json(
+        { error: "Failed to update data" },
+        { status: 400 }
+      );
+    }
+
+    return NextResponse.json({ updatedStudent: data });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error: error?.response?.data?.error_message || error?.message,
+      },
+      { status: 400 }
+    );
+  }
+}

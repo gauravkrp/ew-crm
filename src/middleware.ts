@@ -1,4 +1,3 @@
-import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { stytchAPI } from "@/lib/stytch";
