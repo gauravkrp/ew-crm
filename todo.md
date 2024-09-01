@@ -10,7 +10,7 @@
 8. Redundant package removal ✅
 9. Msexcel addition ✅
 10. Loader add in all pages ✅
-11. logout and auth/login -> login
+11. logout and auth/login -> login ✅
 12. logged out user auth routing ✅
 13. dob issue ✅
 14. package cleanup ✅

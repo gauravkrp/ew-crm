@@ -1,8 +1,5 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Image from "next/image";
-import MoonIcon from "@geist-ui/icons/moon";
-import SunIcon from "@geist-ui/icons/sun";
-import { Button } from "antd";
 
 import Link from "next/link";
 // import { TriggerApplyFormModalButton } from 'components/App/Common/ApplyOnlineForm';
