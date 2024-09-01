@@ -44,8 +44,8 @@ const formSchema = z.object({
     message: "Phone number must be at least 10 digits.",
   }),
   dob: z.string().transform((str) => new Date(str)),
-  email: z.string().min(2, {
-    message: "email must be at least 2 characters.",
+  email: z.string().email({
+    message: "Please enter a valid email address.",
   }),
 });
 

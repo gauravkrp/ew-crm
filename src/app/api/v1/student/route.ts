@@ -39,14 +39,11 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const requestData: any = await req.json();
-    console.log(requestData);
 
     const { email, gender, first_name, last_name, phone, father_name, dob } =
       requestData;
-    console.log(requestData);
-
     const role = req.cookies.get("role")?.value;
-    console.log("role: ", role);
+    const userId = req.cookies.get("userId")?.value;
 
     const { data, error } = await supabase.from("students").insert({
       first_name,
@@ -55,6 +52,7 @@ export async function POST(req: NextRequest) {
       father_name,
       gender,
       phone,
+      created_by: userId,
     });
     if (error) {
       console.log(error);
@@ -129,6 +127,7 @@ export async function PATCH(req: NextRequest) {
 
     const role = req.cookies.get("role")?.value;
     console.log("role: ", role);
+    const userId = req.cookies.get("userId")?.value;
 
     // Perform the update
     const { data, error } = await supabase
@@ -140,7 +139,8 @@ export async function PATCH(req: NextRequest) {
         father_name,
         gender,
         phone,
-        dob, // Assuming dob is a column in the table
+        dob,
+        updated_by: userId,
       })
       .eq("id", id); // Update the record where the id matches
 

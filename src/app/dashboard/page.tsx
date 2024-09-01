@@ -46,19 +46,19 @@ export default function StudentLeads() {
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const token = localStorage.getItem("TOKEN");
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-      try {
-        const response = await axios.get("/api/v1/student");
-        setData(response.data.students);
-      } catch (error) {
-        toast("Failed to fetch data");
-        console.error("Failed to fetch data:", error);
-      }
-    };
+  const fetchData = async () => {
+    const token = localStorage.getItem("TOKEN");
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    try {
+      const response = await axios.get("/api/v1/student");
+      setData(response.data.students);
+    } catch (error: any) {
+      toast(error?.response?.data?.error || "Failed to fetch data");
+      console.error("Failed to fetch data:", error?.response?.data?.error);
+    }
+  };
 
+  useEffect(() => {
     fetchData();
   }, []);
 
