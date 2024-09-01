@@ -25,6 +25,9 @@ import {
 } from "@/components/ui/select";
 import axios from "axios";
 import toast from "react-hot-toast";
+import { useState } from "react";
+import Loader from "@/components/common/loader";
+import WithAuth from "@/components/Layout";
 
 // Schema validation using Zod
 const formSchema = z.object({
@@ -40,8 +43,8 @@ const formSchema = z.object({
   gender: z.enum(["male", "female"], {
     errorMap: () => ({ message: "Please select a valid gender." }),
   }),
-  phone: z.string().min(10, {
-    message: "Phone number must be at least 10 digits.",
+  mobile_number: z.string().min(10, {
+    message: "mobile number number must be at least 10 digits.",
   }),
   dob: z.string().transform((str) => new Date(str)),
   email: z.string().email({
@@ -49,7 +52,8 @@ const formSchema = z.object({
   }),
 });
 
-export default function StudentForm() {
+function StudentForm() {
+  const [isLoading, setIsLoading] = useState(false);
   const form = useForm({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -57,7 +61,7 @@ export default function StudentForm() {
       last_name: "",
       father_name: "",
       gender: "",
-      phone: "",
+      mobile_number: "",
       dob: "",
       email: "",
     },
@@ -65,6 +69,7 @@ export default function StudentForm() {
 
   const onSubmit = async (data: any) => {
     try {
+      setIsLoading(true);
       const token = localStorage.getItem("TOKEN");
 
       axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
@@ -73,9 +78,14 @@ export default function StudentForm() {
       console.log(responseData);
 
       toast("Form submitted successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error:", error);
-      toast("There was an error submitting the form.");
+      toast(
+        error?.response?.data?.error ||
+          "There was an error submitting the form."
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -178,13 +188,13 @@ export default function StudentForm() {
             />
           </div>
           <div className="flex items-center w-full gap-x-8">
-            {/* Phone */}
+            {/* mobile_number */}
             <FormField
               control={form.control}
-              name="phone"
+              name="mobile_number"
               render={({ field }) => (
                 <FormItem className="w-full">
-                  <FormLabel>Phone</FormLabel>
+                  <FormLabel>mobile_number</FormLabel>
                   <FormControl>
                     <Input placeholder="1234567890" {...field} />
                   </FormControl>
@@ -210,7 +220,11 @@ export default function StudentForm() {
           </div>
           <div className="w-full flex justify-end">
             <Button className="w-64" type="submit">
-              Submit
+              {isLoading ? (
+                <Loader color="#fff" size="16px" borderWidth="2px" />
+              ) : (
+                "Submit"
+              )}
             </Button>
           </div>
         </form>
@@ -218,3 +232,5 @@ export default function StudentForm() {
     </div>
   );
 }
+
+export default WithAuth(StudentForm);

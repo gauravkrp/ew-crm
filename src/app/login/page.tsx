@@ -16,16 +16,20 @@ import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import WithAuth from "@/components/Layout";
+import Loader from "@/components/common/loader";
 
-export default function Login() {
+function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
   const handleLogin = async () => {
     if (!email || !password) {
       toast("Please fill all the fields");
       return;
     }
+    setIsLoading(true);
     try {
       const { data } = await axios.post("/api/auth/login", {
         email,
@@ -36,11 +40,13 @@ export default function Login() {
       router.push("/dashboard");
     } catch (err: any) {
       toast(err?.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full h-[100dvh] flex items-center justify-center">
+    <div className="w-full mt-16 flex items-center justify-center">
       <Card className="w-[650px]">
         <CardHeader>
           <CardTitle>Login</CardTitle>
@@ -82,9 +88,17 @@ export default function Login() {
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={handleLogin}>Login</Button>
+          <Button onClick={handleLogin}>
+            {isLoading ? (
+              <Loader color="#fff" size="16px" borderWidth="2px" />
+            ) : (
+              "Login"
+            )}
+          </Button>
         </CardFooter>
       </Card>
     </div>
   );
 }
+
+export default WithAuth(Login);

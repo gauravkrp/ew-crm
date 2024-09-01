@@ -15,11 +15,14 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
+import WithAuth from "@/components/Layout";
+import Loader from "@/components/common/loader";
 
-export default function Signup() {
+function Signup() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
@@ -30,6 +33,7 @@ export default function Signup() {
       toast("Password and confirm password are not same");
       return;
     }
+    setIsLoading(true);
     try {
       const { data } = await axios.post("/api/auth/signup", {
         email,
@@ -39,11 +43,13 @@ export default function Signup() {
       toast(`Successfully logged in!`);
     } catch (err: any) {
       toast(err?.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="w-full h-[100dvh] flex items-center justify-center">
+    <div className="w-full mt-16 flex items-center justify-center">
       <Card className="w-[650px]">
         <CardHeader>
           <CardTitle>SignUp</CardTitle>
@@ -86,19 +92,24 @@ export default function Signup() {
             </div>
             <div className="text-sm">
               Already have an account?{" "}
-              <Link
-                className="text-blue-800 font-semibold"
-                href={"/auth/login"}
-              >
+              <Link className="text-blue-800 font-semibold" href={"/login"}>
                 Login
               </Link>
             </div>
           </div>
         </CardContent>
         <CardFooter className="flex justify-end">
-          <Button onClick={handleSignup}>Signup</Button>
+          <Button onClick={handleSignup}>
+            {isLoading ? (
+              <Loader color="#fff" size="16px" borderWidth="2px" />
+            ) : (
+              "Signup"
+            )}
+          </Button>
         </CardFooter>
       </Card>
     </div>
   );
 }
+
+export default WithAuth(Signup);

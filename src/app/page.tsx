@@ -1,106 +1,209 @@
 "use client";
-// import { getLeads } from "@/api/leads";
-import withLayout from "@/components/Layout";
+
+import * as React from "react";
 import axios from "axios";
-import Image from "next/image";
-import { useState, useEffect } from "react";
-import DataTable from "react-data-table-component";
-// import { apiInstance, setAuthToken } from "@/api";
+import Header from "@/components/Layout/NewHeader";
+import {
+  ColumnFiltersState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { ChevronDown } from "lucide-react";
 
-const columns = [
-  {
-    name: "id",
-    selector: (row: any) => row.id,
-    sortable: true,
-  },
-  {
-    name: "Name",
-    selector: (row: any) => row.name,
-  },
-  {
-    name: "Email",
-    selector: (row: any) => row.email,
-    sortable: true,
-  },
-  {
-    name: "Gender",
-    selector: (row: any) => row?.gender[0],
-  },
-  {
-    name: "Mobile",
-    selector: (row: any) => row?.mobile_number,
-  },
-  {
-    name: "Desired Course",
-    selector: (row: any) => row?.desired_course,
-    sortable: true,
-  },
-  {
-    name: "Desired Country",
-    selector: (row: any) => row?.desired_country,
-    sortable: true,
-  },
-];
+import { Button } from "@/components/ui/button";
+import {
+  Student,
+  StudentLeadColumns as columns,
+} from "@/components/dashboard/columns";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import Loader from "@/components/common/loader";
+import WithAuth from "@/components/Layout";
 
-function Home() {
-  const [leadsData, setLeadsData] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(10);
-  const [totalRows, setTotalRows] = useState(0);
-  // const fetchData = async (page = 1, limit = 10) => {
-  //   try {
-  //     const {
-  //       data: { data, meta },
-  //     } = await getLeads({ page, limit });
-  //     setLeadsData(data);
-  //     setTotalRows(meta?.filter_count || 0);
-  //     console.log(data);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  const handlePageChange = (page: number) => {
-    // fetchData(page);
-    setCurrentPage(page);
+function StudentLeads() {
+  const [data, setData] = useState<Student[]>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
+  const fetchData = async () => {
+    const token = localStorage.getItem("TOKEN");
+    axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    setIsLoading(true);
+    try {
+      const response = await axios.get("/api/v1/student");
+      setData(response.data.students);
+    } catch (error: any) {
+      toast(error?.response?.data?.error || "Failed to fetch data");
+      console.error("Failed to fetch data:", error?.response?.data?.error);
+    } finally {
+      setIsLoading(false);
+    }
   };
-
-  const handlePerRowsChange = async (newPerPage: number, page: number) => {
-    // fetchData(page, newPerPage);
-    setPerPage(newPerPage);
-  };
-
-  // const getToken = async () => {
-  //   const token = localStorage.getItem("Token");
-  //   if (token) {
-  //     setAuthToken(token);
-  //     fetchData();
-  //   } else {
-  //     router.push("/auth");
-  //   }
-  // };
 
   useEffect(() => {
-    // fetchData();
+    fetchData();
   }, []);
+
+  const table = useReactTable({
+    data,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
+
   return (
-    <>
-      <div className="md:mx-20 my-2 py-4 px-2 shadow-md rounded-lg">
-        <DataTable
-          title={"Student Leads"}
-          columns={columns}
-          data={leadsData}
-          fixedHeader={true}
-          // pagination
-          // paginationServer
-          // paginationTotalRows={totalRows}
-          // paginationDefaultPage={currentPage}
-          // onChangeRowsPerPage={handlePerRowsChange}
-          // onChangePage={handlePageChange}
+    <div className="w-full px-12">
+      <div className="flex items-center py-4">
+        <Input
+          placeholder="Filter emails..."
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+          onChange={(event) =>
+            table.getColumn("email")?.setFilterValue(event.target.value)
+          }
+          className="max-w-sm"
         />
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline" className="ml-auto">
+              Columns <ChevronDown className="ml-2 h-4 w-4" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            {table
+              .getAllColumns()
+              .filter((column) => column.getCanHide())
+              .map((column) => {
+                return (
+                  <DropdownMenuCheckboxItem
+                    key={column.id}
+                    className="capitalize"
+                    checked={column.getIsVisible()}
+                    onCheckedChange={(value) =>
+                      column.toggleVisibility(!!value)
+                    }
+                  >
+                    {column.id}
+                  </DropdownMenuCheckboxItem>
+                );
+              })}
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
-    </>
+      <div className="rounded-md border">
+        <Table>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  return (
+                    <TableHead key={header.id}>
+                      {header.isPlaceholder
+                        ? null
+                        : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                    </TableHead>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  {isLoading ? (
+                    <Loader size="24px" borderWidth="2px" />
+                  ) : (
+                    <div>No results.</div>
+                  )}
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </div>
+      <div className="flex items-center justify-end space-x-2 py-4">
+        <div className="flex-1 text-sm text-muted-foreground">
+          {table.getFilteredSelectedRowModel().rows.length} of{" "}
+          {table.getFilteredRowModel().rows.length} row(s) selected.
+        </div>
+        <div className="space-x-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => table.nextPage()}
+            disabled={!table.getCanNextPage()}
+          >
+            Next
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 }
 
-export default withLayout(Home);
+export default WithAuth(StudentLeads);

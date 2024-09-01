@@ -110,12 +110,14 @@ export const StudentLeadColumns: ColumnDef<Student>[] = [
   {
     accessorKey: "gender",
     header: "Gender",
-    cell: ({ row }) => <div>{row.getValue("gender")}</div>,
+    cell: ({ row }) => (
+      <div className=" capitalize">{row.getValue("gender")}</div>
+    ),
   },
   {
-    accessorKey: "phone",
-    header: "Phone Number",
-    cell: ({ row }) => <div>{row.getValue("phone")}</div>,
+    accessorKey: "mobile_number",
+    header: "Mobile Number",
+    cell: ({ row }) => <div>{row.getValue("mobile_number")}</div>,
   },
 
   {

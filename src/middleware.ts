@@ -39,12 +39,14 @@ export async function middleware(request: NextRequest) {
     }
     const role = userData?.role;
     const id = userData?.id;
+    console.log("usrr: ", userData);
 
     const response = NextResponse.next();
     // console.log(response);
 
     response.cookies.set("role", role);
     response.cookies.set("userId", id);
+    console.log(id);
 
     return response;
   } catch (err: any) {
@@ -55,5 +57,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/v1/approval", "/api/v1/student"],
+  matcher: ["/api/v1/approval", "/api/v1/student", "/api/v1/upload"],
 };

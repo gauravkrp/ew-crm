@@ -1,115 +1,80 @@
-// import { NextResponse } from "next/server";
-// import formidable, { File } from "formidable";
-// import { read, utils } from "xlsx";
-// import { createClient } from "@supabase/supabase-js";
-// import fs from "fs/promises"; // Use fs/promises for async operations
-// import { NextApiRequest } from "next";
-// import { supabase } from "@/utils/supabase/client";
+import { NextRequest, NextResponse } from "next/server";
+import path from "path";
+import fs from "fs";
+import * as XLSX from "xlsx";
+import { parse } from "csv-parse/sync";
+import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/utils/supabase/client";
 
-import { NextResponse } from "next/server";
+const UPLOAD_DIR = path.resolve(process.env.ROOT_PATH ?? "", "public/uploads");
 
-export const GET = () => {
-  return NextResponse.json({ message: "Test" });
+export const POST = async (req: NextRequest) => {
+  try {
+    const formData = await req.formData();
+    const body = Object.fromEntries(formData);
+    const file = (body.file as Blob) || null;
+
+    if (file) {
+      const buffer = Buffer.from(await file.arrayBuffer());
+      const fileName = (body.file as File).name;
+      const fileExtension = path.extname(fileName).toLowerCase();
+
+      let jsonData: any[] = [];
+
+      if (fileExtension === ".xlsx" || fileExtension === ".xls") {
+        const workbook = XLSX.read(buffer, { type: "buffer" });
+        const sheetName = workbook.SheetNames[0];
+        jsonData = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      } else if (fileExtension === ".csv") {
+        const csvData = buffer.toString();
+        jsonData = parse(csvData, {
+          columns: true,
+          skip_empty_lines: true,
+        });
+      } else {
+        return NextResponse.json({
+          success: false,
+          message: "Only Excel and CSV files are supported.",
+        });
+      }
+
+      const userId = req.cookies.get("userId")?.value;
+
+      const formattedData = jsonData.map((record: any) => ({
+        first_name: record["STUDENT NAME"].split(" ")[0],
+        last_name: record["STUDENT NAME"].split(" ")[1] || "",
+        email: record["EMAIL"],
+        father_name: record["FATHER NAME"],
+        gender: record["GENDER"]?.toLowerCase(),
+        mobile_number: record["MOBILE"],
+        dob: record["DOB"],
+        created_by: userId,
+      }));
+      console.log(formattedData);
+
+      const { data, error } = await supabase
+        .from("students")
+        .insert(formattedData);
+
+      if (error) {
+        console.log(error);
+        return NextResponse.json(
+          { error: "Failed to add data" },
+          { status: 400 }
+        );
+      }
+
+      return NextResponse.json({ success: true });
+    } else {
+      return NextResponse.json({
+        success: false,
+        message: "No file uploaded",
+      });
+    }
+  } catch (error: any) {
+    return NextResponse.json(
+      { error: error?.response?.data?.error_message || error?.message },
+      { status: 500 }
+    );
+  }
 };
-// // Initialize Supabase client
-// // const supabase = createClient(
-// //   process.env.NEXT_PUBLIC_SUPABASE_URL || '',
-// //   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
-// // );
-
-// // Disable Next.js default body parser
-// export const config = {
-//   api: {
-//     bodyParser: false,
-//   },
-// };
-
-// async function parseForm(
-//   req: NextApiRequest
-// ): Promise<{ fields: formidable.Fields; files: formidable.Files }> {
-//   const form = new formidable.IncomingForm();
-//   return new Promise((resolve, reject) => {
-//     form.parse(req, (err, fields, files) => {
-//       if (err) reject(err);
-//       resolve({ fields, files });
-//     });
-//   });
-// }
-
-// export async function POST(req: NextApiRequest) {
-//   try {
-//     const { files } = await parseForm(req);
-
-//     // Extract the file safely
-//     const fileArray = files.file as File[]; // Formidable returns an array for multiple files
-//     const file = Array.isArray(fileArray) ? fileArray[0] : fileArray; // Get the first file if it's an array
-
-//     if (!file) {
-//       return NextResponse.json(
-//         { message: "No file uploaded" },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Check if the file is an Excel file
-//     const mimeType = file.mimetype || "";
-//     if (!mimeType.includes("excel") && !mimeType.includes("spreadsheetml")) {
-//       return NextResponse.json(
-//         { message: "Invalid file type. Please upload an Excel file." },
-//         { status: 400 }
-//       );
-//     }
-
-//     // Read the Excel file asynchronously
-//     try {
-//       const filePath = file.filepath; // Access the file path depending on the environment
-//       const fileBuffer = await fs.readFile(filePath); // Async read
-//       const workbook = read(fileBuffer, { type: "buffer" });
-//       const sheetName = workbook.SheetNames[0];
-//       const worksheet = workbook.Sheets[sheetName];
-//       const jsonData = utils.sheet_to_json(worksheet);
-
-//       // Validate JSON data
-//       const validEntries = jsonData.filter(
-//         (row: any) => row.first_name && row.last_name && row.email
-//       );
-
-//       if (validEntries.length === 0) {
-//         return NextResponse.json(
-//           { message: "No valid entries found in the Excel file." },
-//           { status: 400 }
-//         );
-//       }
-
-//       // Insert valid entries into Supabase asynchronously
-//       const { data, error } = await supabase
-//         .from("students")
-//         .insert(validEntries);
-
-//       if (error) {
-//         console.error("Supabase Insertion Error:", error);
-//         return NextResponse.json(
-//           { message: "Error inserting data into Supabase", error },
-//           { status: 500 }
-//         );
-//       }
-
-//       return NextResponse.json(
-//         { message: "Data inserted successfully", data },
-//         { status: 200 }
-//       );
-//     } catch (fileError) {
-//       console.error("File Processing Error:", fileError);
-//       return NextResponse.json(
-//         { message: "Error processing the file", error: fileError },
-//         { status: 500 }
-//       );
-//     }
-//   } catch (error) {
-//     console.error("General Error:", error);
-//     return NextResponse.json(
-//       { message: "Error processing the request", error },
-//       { status: 500 }
-//     );
-//   }
-// }

@@ -1,19 +1,31 @@
-import Head from "next/head";
-import { NextPage } from "next";
+// components/withAuth.tsx
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Header from "./NewHeader";
 
-import Header from "./Header";
+const WithAuth = (WrappedComponent: any) => {
+  return (props: any) => {
+    const router = useRouter();
+    const isAuthenticated =
+      typeof window !== "undefined" && !!localStorage.getItem("TOKEN");
 
-const withLayout = (PageComponent: NextPage) => (props: any) => {
-  return (
-    <>
-      <div className="w-full h-full bg-gray-50">
-        <Header />
-        <main className="page-wrapper">
-          <PageComponent {...props} />
-        </main>
+    useEffect(() => {
+      if (!isAuthenticated) {
+        router.push("/login");
+      }
+    }, [isAuthenticated]);
+
+    if (!isAuthenticated) {
+      return null;
+    }
+
+    return (
+      <div className="w-full min-h-[100dvh]">
+        <Header isAuthorized={isAuthenticated} />
+        <WrappedComponent {...props} />
       </div>
-    </>
-  );
+    );
+  };
 };
 
-export default withLayout;
+export default WithAuth;
