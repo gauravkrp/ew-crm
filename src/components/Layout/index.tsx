@@ -15,10 +15,6 @@ const WithAuth = (WrappedComponent: any) => {
       }
     }, [isAuthenticated]);
 
-    if (!isAuthenticated) {
-      return null;
-    }
-
     return (
       <div className="w-full min-h-[100dvh]">
         <Header isAuthorized={isAuthenticated} />

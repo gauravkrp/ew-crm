@@ -18,20 +18,30 @@ export async function POST(req: Request) {
       data
     );
 
+    const response: any = await stytchAPI.post(
+      "https://api.stytch.com/v1/passwords/authenticate",
+      data
+    );
+    const stytchUserId = response?.data.session?.user_id;
+
     const { data: dbData, error } = await supabase
       .from("users")
-      .insert([{ email, first_name, last_name, status: "pending", phone }]);
+      .insert([
+        {
+          email,
+          first_name,
+          last_name,
+          status: "pending",
+          phone,
+          stytch_user_id: stytchUserId,
+        },
+      ]);
     if (error) {
       return NextResponse.json(
         { error: "Failed to add data" },
         { status: 400 }
       );
     }
-
-    const response: any = await stytchAPI.post(
-      "https://api.stytch.com/v1/passwords/authenticate",
-      data
-    );
 
     return NextResponse.json({ sessionToken: response?.data?.session_jwt });
   } catch (error: any) {

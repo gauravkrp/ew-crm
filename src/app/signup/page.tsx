@@ -17,6 +17,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import WithAuth from "@/components/Layout";
 import Loader from "@/components/common/loader";
+import { routes } from "@/utils/routes";
 
 function Signup() {
   const [email, setEmail] = useState<string>("");
@@ -42,7 +43,7 @@ function Signup() {
       localStorage.setItem("TOKEN", data?.sessionToken);
       toast(`Successfully logged in!`);
     } catch (err: any) {
-      toast(err?.message);
+      toast(err?.response?.data?.error);
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +93,10 @@ function Signup() {
             </div>
             <div className="text-sm">
               Already have an account?{" "}
-              <Link className="text-blue-800 font-semibold" href={"/login"}>
+              <Link
+                className="text-blue-800 font-semibold"
+                href={routes.AUTH.LOGIN}
+              >
                 Login
               </Link>
             </div>
@@ -112,4 +116,4 @@ function Signup() {
   );
 }
 
-export default WithAuth(Signup);
+export default Signup;

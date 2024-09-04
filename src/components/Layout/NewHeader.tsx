@@ -17,8 +17,8 @@ export default function Header({
     router.replace("/login");
   };
   return (
-    <div className=" mx-auto px-4 md:px-6 lg:px-12">
-      <header className="flex h-20 w-full shrink-0 items-center px-2 md:px-6">
+    <div className=" mx-auto md:px-6 lg:px-12">
+      <header className="flex h-20 w-full shrink-0 items-center ">
         <Link href="#" className="mr-6 hidden lg:flex" prefetch={false}>
           <Image
             src={"/assets/logo.png"}
@@ -43,7 +43,7 @@ export default function Header({
                   ADD
                 </Button>
               </Link>
-              <Button className="justify-self-end px-3 h-8 py-0 text-sm">
+              <Button variant={"outline"} className="justify-self-end px-3 h-8 py-0 text-sm">
                 <FiLogOut onClick={Logout} />
               </Button>
             </div>

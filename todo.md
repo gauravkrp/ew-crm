@@ -16,3 +16,9 @@
 14. package cleanup ✅
 15. +91 prepend, mobile_number use instead of phone ✅
 16. capitailize gender ✅
+17. Add the google signup auth -> later
+18. password view and design improvements
+19. Remove expose of secret apis from frontend ✅
+20. RBFC in our crm ✅
+21. logout outline ✅
+22. Fix security headers

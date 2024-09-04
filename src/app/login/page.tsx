@@ -18,6 +18,7 @@ import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import WithAuth from "@/components/Layout";
 import Loader from "@/components/common/loader";
+import { routes } from "@/utils/routes";
 
 function Login() {
   const [email, setEmail] = useState<string>("");
@@ -80,7 +81,7 @@ function Login() {
               Already have an account?{" "}
               <Link
                 className="text-blue-800 font-semibold"
-                href={"/auth/signup"}
+                href={routes.AUTH.SIGNUP}
               >
                 Signup
               </Link>
@@ -101,4 +102,4 @@ function Login() {
   );
 }
 
-export default WithAuth(Login);
+export default Login;

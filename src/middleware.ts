@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { stytchAPI } from "@/lib/stytch";
 import { supabase } from "./utils/supabase/client";
+import { VERIFICATION_STATUS } from "./user-verification.server";
 
 export async function middleware(request: NextRequest) {
   const token = request?.headers?.get("authorization")?.split(" ")[1];
@@ -16,42 +17,34 @@ export async function middleware(request: NextRequest) {
       data
     );
     const email = authResponse.data.user.emails[0].email;
-
+    const role = authResponse.data.session?.custom_claims?.role
+    const status = authResponse.data.session?.custom_claims?.status
     const { data: dbData, error } = await supabase
       .from("users")
-      .select("id, role, status")
+      .select("id")
       .eq("email", email);
     const userData = dbData?.[0];
-    console.log("data: ", userData);
-
-    const status = userData?.status;
-    if (status == "pending") {
+    const id = userData?.id
+    if (status == VERIFICATION_STATUS.PENDING) {
       return NextResponse.json(
         { error: "You are not approved yet! Please contact admin" },
         { status: 403 }
       );
     }
-    if (status == "rejected") {
+    if (status == VERIFICATION_STATUS.REJECTED) {
       return NextResponse.json(
         { error: "You account is rejected by admin" },
         { status: 403 }
       );
     }
-    const role = userData?.role;
-    const id = userData?.id;
-    console.log("usrr: ", userData);
 
     const response = NextResponse.next();
-    // console.log(response);
 
     response.cookies.set("role", role);
     response.cookies.set("userId", id);
-    console.log(id);
 
     return response;
   } catch (err: any) {
-    console.log(err);
-
     return NextResponse.json({ error: "Invalid Token" }, { status: 401 });
   }
 }

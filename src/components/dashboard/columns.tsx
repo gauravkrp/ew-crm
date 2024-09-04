@@ -4,7 +4,7 @@ import * as React from "react";
 import { useState } from "react";
 import axios from "axios";
 import { ColumnDef } from "@tanstack/react-table";
-import { Pencil } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -303,6 +303,67 @@ export const StudentLeadColumns: ColumnDef<Student>[] = [
                   </div>
                 </form>
               </Form>
+            </DialogContent>
+          </Dialog>
+        </div>
+      );
+    },
+  },
+  {
+    id: "actions",
+    header: "Actions",
+    cell: ({ row }) => {
+      const [open, setOpen] = useState(false);
+
+      const form = useForm({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+          first_name: row.original.first_name,
+          last_name: row.original.last_name,
+          father_name: row.original.father_name,
+          gender: row.original.gender,
+          phone: row.original.phone,
+          dob: row.original.dob,
+          email: row.original.email,
+        },
+      });
+
+      const onDelete = async () => {
+        try {
+          const token = localStorage.getItem("TOKEN");
+
+          axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+          let id = row.original.id;
+          const response = await axios.delete(`/api/v1/student?id=${id}`);
+          console.log(response.data);
+
+          toast("Student information updated successfully!");
+          setOpen(false); // Close the dialog after successful update
+        } catch (error:any) {
+          console.error("Error updating student information:", error.response.data);
+          toast("There was an error updating the student information.");
+        }
+      };
+
+      return (
+        <div>
+          <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline" size="sm">
+                <Trash className="mr-2 h-4 w-4" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <h2 className="text-lg font-medium">
+                Are you Sure you want to delete this record
+              </h2>
+
+              <div className="flex justify-end space-x-2">
+                <DialogClose asChild>
+                  <Button variant="outline">Cancel</Button>
+                </DialogClose>
+                <Button onClick={onDelete}>Delete</Button>
+              </div>
             </DialogContent>
           </Dialog>
         </div>
