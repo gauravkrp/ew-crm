@@ -1,6 +1,6 @@
 export const routes = {
-  AUTH: {
-    LOGIN: `/login`,
-    SIGNUP: `/signup`,
-  },
+	AUTH: {
+		LOGIN: `/login`,
+		SIGNUP: `/sign-up`,
+	},
 };

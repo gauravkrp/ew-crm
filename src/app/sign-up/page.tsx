@@ -8,35 +8,42 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import Loader from "@/components/common/loader";
 import { routes } from "@/utils/routes";
+import { useRouter } from "next/navigation";
 import { PasswordInput } from "@/components/common/inputs";
 import { EmailRegex } from "@/lib/constants";
-function Login() {
+
+function Signup() {
 	const [email, setEmail] = useState<string>("");
 	const [password, setPassword] = useState<string>("");
+	const [confirmPassword, setConfirmPassword] = useState<string>("");
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
-	const handleLogin = async () => {
-		if (!email || !password) {
+
+	const handleSignup = async () => {
+		if (!email || !password || !confirmPassword) {
 			toast("Please fill all the fields");
 			return;
 		}
 		if (!EmailRegex.test(email)) {
 			toast("Invalid email format");
 		}
+		if (password != confirmPassword) {
+			toast("Password and confirm password are not same");
+			return;
+		}
 		setIsLoading(true);
 		try {
-			const { data } = await axios.post("/api/auth/login", {
+			const { data } = await axios.post("/api/auth/signup", {
 				email,
 				password,
 			});
 			localStorage.setItem("TOKEN", data?.sessionToken);
-			toast(`Successfully logged in!`);
-			router.push("/dashboard");
+			toast(`Successfully singed up!`);
+			router.push("/login");
 		} catch (err: any) {
-			toast(err?.message);
+			toast(err?.response?.data?.error);
 		} finally {
 			setIsLoading(false);
 		}
@@ -46,7 +53,7 @@ function Login() {
 		<div className="w-full min-h-[100dvh] flex items-center justify-center">
 			<Card className="w-[650px]">
 				<CardHeader>
-					<CardTitle>Login</CardTitle>
+					<CardTitle>Sign Up</CardTitle>
 					<CardDescription>{`Welcome to Edugyanam CRM!👋🏻`}</CardDescription>
 				</CardHeader>
 				<CardContent>
@@ -59,29 +66,40 @@ function Login() {
 								}}
 								type="email"
 								id="email"
-								placeholder="Enter email ...."
+								placeholder="Enter email..."
 							/>
 						</div>
 						<div className="flex flex-col space-y-2">
 							<Label htmlFor="password">Password</Label>
+							<div className="relative">
+								<PasswordInput
+									id={"password"}
+									value={password}
+									setvalue={setPassword}
+									placeholder={"Enter password..."}
+								/>
+							</div>
+						</div>
+						<div className="flex flex-col space-y-2">
+							<Label htmlFor="password">Confirm Password</Label>
 							<PasswordInput
-								id={"password"}
-								value={password}
-								setvalue={setPassword}
-								placeholder={"Enter password..."}
+								id={"confirm-password"}
+								value={confirmPassword}
+								setvalue={setConfirmPassword}
+								placeholder={"Enter confirm password..."}
 							/>
 						</div>
 					</div>
 				</CardContent>
-				<CardFooter className="flex justify-between items-center">
+				<CardFooter className="flex items-center justify-between">
 					<div className="text-sm">
 						Already have an account?{" "}
-						<Link className="text-blue-800 font-semibold" href={routes.AUTH.SIGNUP}>
-							Sign up
+						<Link className="text-blue-800 font-semibold" href={routes.AUTH.LOGIN}>
+							Login
 						</Link>
 					</div>
-					<Button onClick={handleLogin}>
-						{isLoading ? <Loader color="#fff" size="16px" borderWidth="2px" /> : "Login"}
+					<Button onClick={handleSignup}>
+						{isLoading ? <Loader color="#fff" size="16px" borderWidth="2px" /> : "Sign up"}
 					</Button>
 				</CardFooter>
 			</Card>
@@ -89,4 +107,4 @@ function Login() {
 	);
 }
 
-export default Login;
+export default Signup;
