@@ -19,7 +19,8 @@ import { useRouter } from "next/navigation";
 import WithAuth from "@/components/Layout";
 import Loader from "@/components/common/loader";
 import { routes } from "@/utils/routes";
-
+import { PasswordInput } from "@/components/common/inputs";
+import {EmailRegex} from "@/lib/constants"
 function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -30,6 +31,9 @@ function Login() {
       toast("Please fill all the fields");
       return;
     }
+    if (!EmailRegex.test(email)) {
+      toast('Invalid email format');
+    } 
     setIsLoading(true);
     try {
       const { data } = await axios.post("/api/auth/login", {
@@ -47,7 +51,7 @@ function Login() {
   };
 
   return (
-    <div className="w-full mt-16 flex items-center justify-center">
+    <div className="w-full min-h-[100dvh] flex items-center justify-center">
       <Card className="w-[650px]">
         <CardHeader>
           <CardTitle>Login</CardTitle>
@@ -68,27 +72,25 @@ function Login() {
             </div>
             <div className="flex flex-col space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                type="password"
-                id="password"
-                placeholder="Enter password"
-                onChange={(e) => {
-                  setPassword(e?.target?.value);
-                }}
+              <PasswordInput
+                id={"password"}
+                value={password}
+                setvalue={setPassword}
+                placeholder={"Enter password..."}
               />
-            </div>
-            <div className="text-sm">
-              Already have an account?{" "}
-              <Link
-                className="text-blue-800 font-semibold"
-                href={routes.AUTH.SIGNUP}
-              >
-                Signup
-              </Link>
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end">
+        <CardFooter className="flex justify-between items-center">
+          <div className="text-sm">
+            Already have an account?{" "}
+            <Link
+              className="text-blue-800 font-semibold"
+              href={routes.AUTH.SIGNUP}
+            >
+              Signup
+            </Link>
+          </div>
           <Button onClick={handleLogin}>
             {isLoading ? (
               <Loader color="#fff" size="16px" borderWidth="2px" />

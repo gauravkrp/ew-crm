@@ -1,4 +1,6 @@
 import { stytchAPI } from "@/lib/stytch";
+import { ROLE_EMPLOYEE } from "@/roles.server";
+import { VERIFICATION_STATUS } from "@/user-verification.server";
 import { supabase } from "@/utils/supabase/client";
 import axios from "axios";
 import { NextResponse } from "next/server";
@@ -13,17 +15,28 @@ export async function POST(req: Request) {
     session_duration_minutes: 60 * 24, //
   };
   try {
-    const authResponse: any = await stytchAPI.post(
+    const passwordResponse: any = await stytchAPI.post(
       "https://api.stytch.com/v1/passwords",
       data
     );
 
-    const response: any = await stytchAPI.post(
+    const authResponse: any = await stytchAPI.post(
       "https://api.stytch.com/v1/passwords/authenticate",
       data
     );
-    const stytchUserId = response?.data.session?.user_id;
+    const stytchUserId = authResponse?.data.session?.user_id;
+    const authToken = authResponse?.data?.session_jwt;
 
+    const requestData = {
+      trusted_metadata: {
+        role: ROLE_EMPLOYEE,
+        status:VERIFICATION_STATUS.PENDING
+      },
+    };
+    const claimsResponse: any = await stytchAPI.put(
+      `https://api.stytch.com/v1/users/${stytchUserId}`,
+      requestData
+    );
     const { data: dbData, error } = await supabase
       .from("users")
       .insert([
@@ -43,7 +56,7 @@ export async function POST(req: Request) {
       );
     }
 
-    return NextResponse.json({ sessionToken: response?.data?.session_jwt });
+    return NextResponse.json({ sessionToken: authResponse?.data?.session_jwt });
   } catch (error: any) {
     const statusCode = error?.response?.status || 500;
 

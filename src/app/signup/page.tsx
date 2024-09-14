@@ -18,18 +18,26 @@ import toast from "react-hot-toast";
 import WithAuth from "@/components/Layout";
 import Loader from "@/components/common/loader";
 import { routes } from "@/utils/routes";
+import { useRouter } from "next/navigation";
+import { IoIosEye } from "react-icons/io";
+import { PasswordInput } from "@/components/common/inputs";
+import {EmailRegex} from "@/lib/constants"
 
 function Signup() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
   const [confirmPassword, setConfirmPassword] = useState<string>("");
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleSignup = async () => {
     if (!email || !password || !confirmPassword) {
       toast("Please fill all the fields");
       return;
     }
+    if (!EmailRegex.test(email)) {
+      toast('Invalid email format');
+    } 
     if (password != confirmPassword) {
       toast("Password and confirm password are not same");
       return;
@@ -41,7 +49,8 @@ function Signup() {
         password,
       });
       localStorage.setItem("TOKEN", data?.sessionToken);
-      toast(`Successfully logged in!`);
+      toast(`Successfully singed up!`);
+      router.push("/login");
     } catch (err: any) {
       toast(err?.response?.data?.error);
     } finally {
@@ -50,10 +59,10 @@ function Signup() {
   };
 
   return (
-    <div className="w-full mt-16 flex items-center justify-center">
+    <div className="w-full min-h-[100dvh] flex items-center justify-center">
       <Card className="w-[650px]">
         <CardHeader>
-          <CardTitle>SignUp</CardTitle>
+          <CardTitle>Sign Up</CardTitle>
           <CardDescription>{`Welcome to Edugyanam CRM!👋🏻`}</CardDescription>
         </CardHeader>
         <CardContent>
@@ -66,43 +75,49 @@ function Signup() {
                 }}
                 type="email"
                 id="email"
-                placeholder="Enter email ...."
+                placeholder="Enter email..."
               />
             </div>
             <div className="flex flex-col space-y-2">
               <Label htmlFor="password">Password</Label>
-              <Input
-                type="password"
-                id="password"
-                placeholder="Enter password"
-                onChange={(e) => {
-                  setPassword(e?.target?.value);
-                }}
-              />
+              <div className="relative">
+                <Input
+                  type="password"
+                  id="password"
+                  placeholder="Enter password..."
+                  onChange={(e) => {
+                    setPassword(e?.target?.value);
+                  }}
+                />
+                <PasswordInput
+                  id={"password"}
+                  value={password}
+                  setvalue={setPassword}
+                  placeholder={"Enter confirm password..."}
+                />
+              </div>
             </div>
             <div className="flex flex-col space-y-2">
               <Label htmlFor="password">Confirm Password</Label>
-              <Input
-                type="password"
-                id="password"
-                placeholder="Enter Confirm password"
-                onChange={(e) => {
-                  setConfirmPassword(e?.target?.value);
-                }}
+              <PasswordInput
+                id={"confirm-password"}
+                value={confirmPassword}
+                setvalue={setConfirmPassword}
+                placeholder={"Enter confirm password..."}
               />
-            </div>
-            <div className="text-sm">
-              Already have an account?{" "}
-              <Link
-                className="text-blue-800 font-semibold"
-                href={routes.AUTH.LOGIN}
-              >
-                Login
-              </Link>
             </div>
           </div>
         </CardContent>
-        <CardFooter className="flex justify-end">
+        <CardFooter className="flex items-center justify-between">
+          <div className="text-sm">
+            Already have an account?{" "}
+            <Link
+              className="text-blue-800 font-semibold"
+              href={routes.AUTH.LOGIN}
+            >
+              Login
+            </Link>
+          </div>
           <Button onClick={handleSignup}>
             {isLoading ? (
               <Loader color="#fff" size="16px" borderWidth="2px" />

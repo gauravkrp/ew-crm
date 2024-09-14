@@ -24,7 +24,9 @@ export async function middleware(request: NextRequest) {
       .select("id")
       .eq("email", email);
     const userData = dbData?.[0];
-    const id = userData?.id
+    const id = userData?.id;
+    console.log(status);
+    
     if (status == VERIFICATION_STATUS.PENDING) {
       return NextResponse.json(
         { error: "You are not approved yet! Please contact admin" },
@@ -37,6 +39,7 @@ export async function middleware(request: NextRequest) {
         { status: 403 }
       );
     }
+
 
     const response = NextResponse.next();
 

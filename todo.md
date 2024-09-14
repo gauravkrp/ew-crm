@@ -22,3 +22,6 @@
 20. RBFC in our crm ✅
 21. logout outline ✅
 22. Fix security headers
+23. Design center content format center aligned view password email validation
+24. Stytch validate password endpoint
+25. add custom claims 

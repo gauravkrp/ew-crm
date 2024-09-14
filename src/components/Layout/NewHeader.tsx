@@ -49,7 +49,7 @@ export default function Header({
             </div>
           ) : (
             <div>
-              <Link href={"/auth/login"}>
+              <Link href={"/login"}>
                 <Button
                   variant="ghost"
                   className="justify-self-end px-8 py-1 text-sm"
